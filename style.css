@@ -1,0 +1,531 @@
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root {
+  --ink:        #1C2541;
+  --ink-soft:   #3A4468;
+  --paper:      #F4EFE3;
+  --paper-card: #FBF8F0;
+  --paper-line: #DCD3BA;
+  --brass:      #B8892B;
+  --brass-deep: #8C6A1F;
+  --sage:       #5F7A61;
+  --sage-deep:  #43593F;
+  --clay:       #A64B3A;
+  --slate:      #6B7280;
+
+  --font-display: 'Special Elite', 'Courier New', monospace;
+  --font-body:    'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:    'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius: 3px;
+  --shadow-card: 0 1px 0 rgba(28,37,65,0.05), 0 6px 14px -8px rgba(28,37,65,0.35);
+  --shadow-lift: 0 2px 0 rgba(28,37,65,0.06), 0 14px 24px -12px rgba(28,37,65,0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+/* subtle paper grain via layered gradients */
+body {
+  background-image:
+    radial-gradient(rgba(28,37,65,0.035) 1px, transparent 1px);
+  background-size: 3px 3px;
+  min-height: 100vh;
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brass-deep);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   LAYOUT SHELL
+   ============================================================ */
+.desk {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.ledger-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 22px;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  margin-bottom: 22px;
+}
+
+.ledger-header__mark {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--paper);
+  background: rgba(244,239,227,0.12);
+  border: 1px solid rgba(244,239,227,0.35);
+  border-radius: 999px;
+  padding: 5px 10px;
+}
+
+.ledger-header__title h1 {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 30px);
+  margin: 0 0 4px;
+  letter-spacing: 0.01em;
+}
+
+.ledger-header__title p {
+  margin: 0;
+  font-size: 13.5px;
+  color: rgba(244,239,227,0.75);
+}
+
+.ledger-header__date {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  text-align: right;
+  color: rgba(244,239,227,0.8);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   DASHBOARD — "DRAWERS"
+   ============================================================ */
+.drawers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.drawer {
+  background: var(--paper-card);
+  border: 1px solid var(--paper-line);
+  border-top: 3px solid var(--slate);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-card);
+}
+
+.drawer[data-stat="pending"]   { border-top-color: var(--brass); }
+.drawer[data-stat="completed"] { border-top-color: var(--sage); }
+.drawer--high                  { border-top-color: var(--clay); }
+
+.drawer__label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ink-soft);
+}
+
+.drawer__value {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ============================================================
+   WORKSPACE
+   ============================================================ */
+.workspace {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ============================================================
+   REGISTRATION CARD (add / edit form)
+   ============================================================ */
+.registration-card {
+  background: var(--paper-card);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  position: sticky;
+  top: 20px;
+}
+
+.registration-card h2 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--paper-line);
+  color: var(--ink);
+}
+
+.registration-card label {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin: 12px 0 5px;
+}
+
+.registration-card input[type="text"],
+.registration-card input[type="date"],
+.registration-card select {
+  width: 100%;
+  padding: 9px 10px;
+  font-family: var(--font-body);
+  font-size: 14.5px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+}
+
+.registration-card input:focus,
+.registration-card select:focus {
+  border-color: var(--brass-deep);
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.field-error {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  color: var(--clay);
+  font-weight: 600;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn--stamp {
+  background: var(--ink);
+  color: var(--paper);
+  flex: 1;
+  letter-spacing: 0.03em;
+}
+.btn--stamp:hover { background: var(--ink-soft); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink-soft);
+  border-color: var(--paper-line);
+}
+.btn--ghost:hover { background: var(--paper); }
+
+.btn--danger {
+  background: var(--clay);
+  color: #fff;
+}
+.btn--danger:hover { background: #8f3d2e; }
+
+.btn--small {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* ============================================================
+   CATALOG — search / filter / list
+   ============================================================ */
+.catalog__rail {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.search-slot { flex: 1; min-width: 200px; }
+
+#searchInput {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  background: var(--paper-card);
+  color: var(--ink);
+}
+#searchInput:focus { border-color: var(--brass-deep); }
+
+.filter-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--paper-card);
+  border: 1px solid var(--paper-line);
+  border-radius: var(--radius);
+  padding: 3px;
+}
+
+.filter-tab {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+
+.filter-tab.is-active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ============================================================
+   TASK CARDS — index-card / catalog signature
+   ============================================================ */
+.card-index {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.task-card {
+  position: relative;
+  background: var(--paper-card);
+  border: 1px solid var(--paper-line);
+  border-left: 5px solid var(--slate);
+  border-radius: var(--radius);
+  padding: 16px 16px 14px;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+.task-card:hover {
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-2px);
+}
+
+.task-card[data-priority="High"]   { border-left-color: var(--clay); }
+.task-card[data-priority="Medium"] { border-left-color: var(--brass); }
+.task-card[data-priority="Low"]    { border-left-color: var(--sage); }
+
+.task-card.is-completed {
+  opacity: 0.72;
+}
+
+.task-card.is-completed .task-card__title {
+  text-decoration: line-through;
+  text-decoration-color: var(--sage-deep);
+}
+
+.task-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.task-card__title {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 4px;
+  word-break: break-word;
+}
+
+.task-card__course {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+}
+
+/* priority stamp — rubber-stamp signature element */
+.stamp {
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 9px;
+  border: 1.5px dashed currentColor;
+  border-radius: 999px;
+  transform: rotate(-4deg);
+  white-space: nowrap;
+}
+
+.stamp--High   { color: var(--clay); }
+.stamp--Medium { color: var(--brass-deep); }
+.stamp--Low    { color: var(--sage-deep); }
+
+.task-card__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--paper-line);
+}
+
+.task-card__due {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.task-card__due.is-overdue {
+  color: var(--clay);
+  font-weight: 600;
+}
+
+.status-pill {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.status-pill--pending {
+  background: rgba(184,137,43,0.15);
+  color: var(--brass-deep);
+}
+
+.status-pill--completed {
+  background: rgba(95,122,97,0.16);
+  color: var(--sage-deep);
+}
+
+.task-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.task-card__actions .btn { flex: 1; min-width: 0; }
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+.empty-shelf {
+  text-align: center;
+  padding: 50px 20px;
+  border: 1px dashed var(--paper-line);
+  border-radius: var(--radius);
+  color: var(--ink-soft);
+}
+
+.empty-shelf__title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+
+.empty-shelf__body { margin: 0; font-size: 13.5px; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.desk-footer {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   CONFIRM SLIP (delete confirmation modal)
+   ============================================================ */
+.confirm-slip {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,37,65,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+/* Author display:flex above beats the UA stylesheet's [hidden]{display:none},
+   so this rule must restore it explicitly whenever the attribute is present. */
+.confirm-slip[hidden] {
+  display: none;
+}
+
+.confirm-slip__box {
+  background: var(--paper-card);
+  border-radius: var(--radius);
+  padding: 22px;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: var(--shadow-lift);
+  border-top: 4px solid var(--clay);
+}
+
+.confirm-slip__box p {
+  margin: 0 0 16px;
+  font-size: 14.5px;
+  color: var(--ink);
+}
+
+.confirm-slip__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 760px) {
+  .workspace { grid-template-columns: 1fr; }
+  .registration-card { position: static; }
+  .drawers { grid-template-columns: repeat(2, 1fr); }
+  .ledger-header { grid-template-columns: 1fr; text-align: left; }
+  .ledger-header__date { text-align: left; }
+}
