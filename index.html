@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Coursework Ledger — Campus Task Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="desk">
+
+  <!-- Header: ledger title bar -->
+  <header class="ledger-header">
+    <div class="ledger-header__mark">CTM–01</div>
+    <div class="ledger-header__title">
+      <h1>The Coursework Ledger</h1>
+      <p>A running record of everything due, by course and by date.</p>
+    </div>
+    <div class="ledger-header__date" id="todayStamp"></div>
+  </header>
+
+  <!-- Dashboard: card catalog drawers -->
+  <section class="drawers" aria-label="Progress summary">
+    <div class="drawer" data-stat="total">
+      <span class="drawer__label">Total on record</span>
+      <span class="drawer__value" id="statTotal">0</span>
+    </div>
+    <div class="drawer" data-stat="pending">
+      <span class="drawer__label">Pending</span>
+      <span class="drawer__value" id="statPending">0</span>
+    </div>
+    <div class="drawer" data-stat="completed">
+      <span class="drawer__label">Completed</span>
+      <span class="drawer__value" id="statCompleted">0</span>
+    </div>
+    <div class="drawer drawer--high" data-stat="high">
+      <span class="drawer__label">High priority</span>
+      <span class="drawer__value" id="statHigh">0</span>
+    </div>
+  </section>
+
+  <div class="workspace">
+
+    <!-- Registration card: add / edit task -->
+    <section class="registration-card" aria-label="Add or edit a task">
+      <h2 id="formTitle">New Entry</h2>
+      <form id="taskForm" novalidate>
+        <input type="hidden" id="taskId">
+
+        <label for="taskTitle">Task</label>
+        <input type="text" id="taskTitle" placeholder="e.g. Submit lab report" required maxlength="120">
+
+        <label for="taskCourse">Course / Subject</label>
+        <input type="text" id="taskCourse" placeholder="e.g. CS 204 – Networks" required maxlength="80">
+
+        <div class="field-row">
+          <div class="field-half">
+            <label for="taskDue">Due date</label>
+            <input type="date" id="taskDue" required>
+          </div>
+          <div class="field-half">
+            <label for="taskPriority">Priority</label>
+            <select id="taskPriority" required>
+              <option value="High">High</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <p class="field-error" id="formError" role="alert" hidden></p>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--stamp" id="submitBtn">File Entry</button>
+          <button type="button" class="btn btn--ghost" id="cancelEditBtn" hidden>Cancel edit</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Catalog: search, filter, task list -->
+    <section class="catalog" aria-label="Task list">
+
+      <div class="catalog__rail">
+        <div class="search-slot">
+          <label for="searchInput" class="visually-hidden">Search by task or course</label>
+          <input type="search" id="searchInput" placeholder="Search task or course…">
+        </div>
+        <div class="filter-tabs" role="tablist" aria-label="Filter tasks">
+          <button class="filter-tab is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+          <button class="filter-tab" data-filter="pending" role="tab" aria-selected="false">Pending</button>
+          <button class="filter-tab" data-filter="completed" role="tab" aria-selected="false">Completed</button>
+        </div>
+      </div>
+
+      <div class="card-index" id="taskList"><!-- task cards injected here --></div>
+
+      <div class="empty-shelf" id="emptyState" hidden>
+        <p class="empty-shelf__title">Nothing filed here.</p>
+        <p class="empty-shelf__body">Add a task above, or adjust your search and filter.</p>
+      </div>
+
+    </section>
+  </div>
+
+  <footer class="desk-footer">
+    <span>Stored on this device only — nothing leaves your browser.</span>
+  </footer>
+</div>
+
+<div class="confirm-slip" id="confirmSlip" hidden>
+  <div class="confirm-slip__box">
+    <p id="confirmMessage">Remove this entry from the ledger?</p>
+    <div class="confirm-slip__actions">
+      <button class="btn btn--ghost" id="confirmCancel">Keep it</button>
+      <button class="btn btn--danger" id="confirmDelete">Remove</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
